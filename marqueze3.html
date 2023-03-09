@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href='<link href="https://fonts.googleapis.com/css2?family=Londrina+Shadowdisplay=swap" rel="stylesheet">' type='text/css'>
+<style>
+body {
+  font-family: Courier, serif;
+  margin: 0 auto;
+  max-width: 600px;
+  background: #A569BD;
+}
+div {
+  height: 300px;
+  background-size: 100% 100%;
+  position: relative;
+  margin: 40px 0 0 0;
+  border-radius: 12px;
+}
+h1 {
+  font-family: 'Londrina Shadow', cursive;
+  text-align: center;
+  font-size: 75px;
+  color: #aaaaaa;
+  margin: 60px 0 0 0;
+}
+h2 {
+  text-align: center;
+  color: #bbbbbb;
+  margin: 0px 0 70px 0;
+}
+p {
+  color: rgba(92, 115, 129);
+  background: black;
+  background: linear-gradient(bottom, rgba(114, 92, 129), rgba(0,0,0,.4));
+  background: -webkit-linear-gradient(bottom, rgba(98, 187, 245), rgba(0,0,0,.4));
+  background: -moz-linear-gradient(bottom, rgba(98, 187, 245), rgba(0,0,0,.4));
+  padding: 10px;
+  line-height: 28px;
+  text-align: justify;
+  position: absolute;
+  bottom: 0;
+  margin: 0;
+  height: 30px;
+  transition: height .5s;
+  -webkit-transition: height .5s;
+  -moz-transition: height .5s;
+}
+
+small {
+  opacity: 0;
+}
+
+.show-description p {
+  height: 150px;
+}
+
+.show-description small {
+  opacity: 1;
+}
+
+.first{
+  background-image: url("https://staticg.sportskeeda.com/editor/2022/07/209cc-16585900601807-1920.jpg");
+}
+.second{
+  background-image: url("https://images.wallpapersden.com/image/wxl-gohan-beast-hd-dragon-ball-super_86134.jpg");
+}
+.dessert{
+  background-image: url("https://i2.wp.com/omnigeekempire.com/wp-content/uploads/2021/07/E6gnAk5WYAAcziB.jpg.png?fit=849%2C531");
+}
+.price {
+  float: right;
+}
+
+input {
+	font-size: 22px;
+}
+
+
+
+@media (max-width: 500px) {
+  h1 {
+    font-size: 50px;
+    margin-top: 20px;
+    line-height: 40px;
+  }
+  h2 {
+    font-size: 20px;
+    margin: 20px 0 30px 0;
+  }
+  div {
+    margin: 20px 12px 0 12px;
+  }
+  p {
+    font-size: 20px;
+    line-height: 24px;
+  }
+  small {
+    font-size: 16px;
+  }
+}
+
+</style>
+
+</head>
+
+<body>
+<h1>MY TOP 3 DRAGON BALL CHARACTERS</h1>
+<h2></h2>
+<div class="first">
+ <input class="quantities" type="number" min="0" style="width: 50px">
+  <p>goku <span class="price">$10</span><br />
+  <small>A saiyan from earth</small></p>
+</div>
+
+<div class="second">
+ <input class="quantities" type="number" min="0" style="width: 50px">
+  <p>gohan <span class="price">$15</span><br />
+  <small>The son of goku and chi chi</small></p>
+</div>
+  
+<div class="dessert">
+ <input class="quantities" type="number" min="0" style="width: 50px">
+  <p>vegeta  <span class="price">$10</span><br />
+  <small>goku's rival</small></p>
+</div>
+
+<br><br>
+  <input id=Name placeholder=" Your Name">
+  <input id=Email type="email" placeholder="Your email">
+  <input id=submit type="submit">
+<br><br>
+
+<script>
+  $('div').on('click', function() {
+      $(this).toggleClass('show-description');
+  });
+</script>
+
+</body>
+
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
+  import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-database.js";
+
+ 
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyADBy8WOZyvmmCUniLkfKc7Bi0oVP8reNI",
+    authDomain: "marqueze-s-p3.firebaseapp.com",
+    projectId: "marqueze-s-p3",
+    storageBucket: "marqueze-s-p3.appspot.com",
+    messagingSenderId: "319711303761",
+    appId: "1:319711303761:web:28ec7d28b82cef20e28070"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  
+  
+const Name = document.querySelector("#Name") 
+const Email = document.querySelector("#Email")
+document.querySelector('#submit').addEventListener('click', Submit)
+const quantities = document.querySelectorAll(".quantities") 
+const itemsList = ["Goku", "Gohan", "Vegeta"]
+const prices = document.querySelectorAll(".price")
+	function Submit() {
+	  const timestamp = buildTimestamp()
+		
+		  let total = 0
+      	  let cart = { }
+      	  for  (let i=0; i<quantities.length; i=i+1) {
+      	  	if (quantities[i].value != "0" && quantities[i].value != "") {	
+let price = prices[i].innerHTML.replace('$', '')
+			  total = total + quantities[i].value * price 
+      	  		cart[itemsList[i]] = parseInt(quantities[i].value) 
+      	  	}
+      	  	quantities[i].value = ""
+      	  }
+		
+	  
+	  set(ref(db, timestamp), {
+		  Name: Name.value,
+	      email: Email.value,
+		  cart: cart,
+totalPrice: total,
+		  paid: "not yet",
+		  
+	  });
+
+	  Name.value = ""
+	  Email.value = ""
+	}
+	
+	function buildTimestamp() {
+	  const now = new Date();
+	  let timestamp = now.getFullYear().toString() + "/";
+	  //const month = now.toLocaleString('default', { month: 'long' });
+
+	  let month = now.getMonth()+1   //add 1 because Javascript uses 0 for January
+	  month = month.toString()
+	  month = addLeadingZero(month)
+	  timestamp += month + "/"; 
+
+	  let date = now.getDate().toString()
+	  date = addLeadingZero(date)
+	  timestamp += date + "/";
+
+	  let hours = now.getHours().toString()
+	  hours = addLeadingZero(hours)
+	  timestamp += hours + ":";
+
+	  let minutes = now.getMinutes().toString()
+	  minutes = addLeadingZero(minutes)
+	  timestamp += minutes + ":";
+
+	  let seconds = now.getSeconds().toString()
+	  seconds = addLeadingZero(seconds)
+	  timestamp += seconds;
+  
+	  return timestamp
+	}
+	
+	function addLeadingZero(units) {
+		if (units.length < 2) {
+			units = "0" + units
+		}
+		return units
+	}
+  
+  
+</script>
